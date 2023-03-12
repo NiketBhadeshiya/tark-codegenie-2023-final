@@ -4,73 +4,175 @@ import java.util.*;
 public class TestMain {
 	static ArrayList<Train> train = new ArrayList<>();
 	static ArrayList<String> coach = new ArrayList<>();
+//	static ArrayList<String> bookedSeats = new ArrayList<>();
 	static String bookedSeats = "";
 	static ArrayList<String> booked = new ArrayList<>();
+	static Map<String, String> map = new HashMap<>();
 //	static String[][] coach = new String
 //	static 
 	
-	public static void Display() {
-		ListIterator<Train> i = train.listIterator();
-		while(i.hasNext()) {
-			System.out.println(i.toString());
-		}
-		ListIterator<String> c = coach.listIterator();
-		while(c.hasNext()) {
-			System.out.println(c.next());
-		}
+	public static void setClass() {
+//		ListIterator<String> c = coach.listIterator();
+//		while(c.hasNext()) {
+//			String[] newc = c.next().split(" ");
+////			String[] coachDetails = coach.
+//			
+//			
+//		}
+//		
+		map.put("SL", "S");
+		map.put("3A", "B");
+		map.put("2A", "A");
+		map.put("1A", "H");
 	}
 	
 	public static Train findTrain(String src, String dest) {
+		Boolean found  = false;
 		Train t = train.get(0);
 		ListIterator<Train> i = train.listIterator();
 		while(i.hasNext()) {
 			t = i.next();
 			if(t.getSrc().equals(src) && t.getDest().equals(dest)) {
+				found = true;
 				return t;
 			}
+		}
+		if(found == false) {
+			System.out.println("No Trains Available");
+//			return false;
 		}
 		return t;
 	}
 	
-	public static String findCoach(String trainNo) {
+	public static String findCoach(String trainNo, String bookClass) {
 //		String[] coach;
+		Boolean found = false;
 		String relativeCoach = coach.get(0);
 		ListIterator<String> c = coach.listIterator();
 		while(c.hasNext()) {
 			String newcoach = c.next();
-			if(newcoach.contains(trainNo)) {
-				return newcoach;
+			if(newcoach.contains(trainNo) && newcoach.contains(map.get(bookClass))) {
+				found = true;
+				relativeCoach = newcoach;
 			}
 		}
-		return relativeCoach;
+		if(found == true) {
+			return relativeCoach;			
+		}
+		return "No Seats Available";
 	}
 	
-	public static String checkAvailabeSeats(String bookClass, String relatedCoach, int neededSeats, int distance) {
-		String str = "Seat not available";
+	public static String checkAvailabeSeats(Booking b, String relatedCoach, int neededSeats, int distance) {
+		String str = "No Seats Available";
 		int countSeat = 0;
 		int cost = 0;
-		long pnr = 100000001;
+		long pnr = 1000000001;
+		Iterator<String> i = booked.listIterator();
+		while(i.hasNext()) {
+			String[] s = i.next().split(" ");
+			pnr = Long.parseLong(s[0]);
+		}
+		String bookClass = b.bookClass;
 		
-		int index = relatedCoach.indexOf(bookClass.substring(0,1));
-		int capacity = Integer.parseInt(relatedCoach.substring(index+3 , index+5));
-		for(int i = 0; i < capacity; i++) {
-			String s = "";
-			s = s.concat(bookClass  + "-" + (i+1));
-			String localBooked = "";
-			if(!bookedSeats.contains(s)) {
+		String bookclass = map.get(bookClass);
+//		System.out.println(bookclass);
+		
+		int index = relatedCoach.indexOf(bookclass);
+		int lastindex = relatedCoach.lastIndexOf(bookclass);
+//		String coachSplit = relatedCoach.split(" ");
+//		int capacity = Integer.parseInt(relatedCoach.substring(index+3 , index+5));
+//		System.out.println(capacity);
+		
+//		ListIterator<String> bIterator = bookedSeats.listIterator();
+//		String localBooked = b.getDate().concat(" ");
+//		
+//		while(bIterator.hasNext()) {
+//			
+//			String seat = bIterator.next();
+//			
+//			if(seat.contains(b.getDate())) {
+//				localBooked = b.getDate().concat(" ");
+//				
+//				for(int i = 0; i < capacity; i++) {
+//					String s = bookclass;
+//					s = s.concat("-" + (i+1));
+//					if(!bIterator.equals(s)) {
+////						return bookClass + "-" + i;
+//						countSeat++;
+//						localBooked = localBooked.concat(s + " ");
+//					}
+//					
+////					System.out.println(localBooked);
+//					if(countSeat == neededSeats) {
+//						System.out.println(localBooked);
+//						break;
+//					}
+//				}
+//				if(countSeat != neededSeats) {
+//					return str;
+//				}else {
+//					switch(bookClass) {
+//					
+//					case "SL":
+//						cost = distance * 1 * neededSeats;
+//						break;
+//					case "3A":
+//						cost = distance * 2 * neededSeats;
+//						break;
+//					case "2A":
+//						cost = distance * 3 * neededSeats;
+//						break;
+//					case "1A":
+//						cost = distance * 4 * neededSeats;
+//						break;
+//					}
+//					
+//					ListIterator<String> i = booked.listIterator();
+//					while(i.hasNext()) {
+//						pnr = pnr + 1;
+////						pnr++;
+//						String book = i.next();
+//						if(book.contains(pnr+"")) {
+//							pnr = pnr + 1;
+//						}
+//					}
+//					String output = pnr + " " + cost;
+//					booked.add(output);
+//					return output;
+//					
+//				}
+//				
+//			}
+//			
+//		}
+		
+		int capacity = Integer.parseInt(relatedCoach.substring(index + 3 , index + 5));
+		int capacity2 = Integer.parseInt(relatedCoach.substring(lastindex + 3 , lastindex + 5));
+		
+		capacity = capacity + capacity2;
+//		System.out.println(capacity);
+		
+//		System.out.println(capacity);
+		
+		String localBooked = b.getDate().concat(" "+b.getSrc()+" "+b.getDest());
+		for(int j = 0; j < capacity; j++) {
+			String s = bookclass;
+			s = s.concat("-" + (j+1));
+			if(!bookedSeats.contains(s) || !bookedSeats.contains(b.getDate() +" "+b.getSrc()+" "+b.getDest())) {
 //				return bookClass + "-" + i;
 				countSeat++;
-				localBooked = localBooked.concat(s);
-//				localBooked = ;
+				localBooked = localBooked.concat(s + " ");
 			}
-			System.out.println(localBooked);
+			
+//			System.out.println(localBooked);
 			if(countSeat == neededSeats) {
 				bookedSeats = bookedSeats.concat(localBooked);
-				System.out.println(bookedSeats);
+//				System.out.println(bookedSeats);
 				break;
 			}
 		}
-		if(countSeat != neededSeats) {
+//		System.out.println(countSeat + " " + neededSeats);
+		if(countSeat < neededSeats) {
 			return str;
 		}else {
 			switch(bookClass) {
@@ -89,11 +191,11 @@ public class TestMain {
 				break;
 			}
 			
-			ListIterator<String> i = booked.listIterator();
-			while(i.hasNext()) {
-				pnr = pnr + 1;
+			ListIterator<String> bookedIterator = booked.listIterator();
+			while(bookedIterator.hasNext()) {
+//				pnr = pnr + 1;
 //				pnr++;
-				String book = i.next();
+				String book = bookedIterator.next();
 				if(book.contains(pnr+"")) {
 					pnr = pnr + 1;
 				}
@@ -112,6 +214,7 @@ public class TestMain {
 		// TODO Auto-generated method stub
 		Scanner in = new Scanner(System.in);
 		int n = in.nextInt();
+		setClass();
 		in.nextLine();
 		while(n-->0) {
 			String route = in.nextLine();
@@ -135,15 +238,38 @@ public class TestMain {
 			String[] bookingRequest = booking.split(" ");
 			
 			Booking b = new Booking(bookingRequest);
-			System.out.println(b.getseats());
+//			System.out.println(b.getseats());
 			
-			Train t = findTrain(b.getSrc(), b.getDest());
-			String relatedCoach = findCoach(t.getTrainNo());
+			ListIterator<Train> i = train.listIterator();
+			Train t;
+			Boolean found = false;
+			while(i.hasNext()) {
+				t = i.next();
+				if(t.getSrc().equals(b.getSrc()) && t.getDest().equals(b.getDest())) {
+					found = true;
+				}
+			}
+			if(found == true) {
+				t = findTrain(b.getSrc(), b.getDest());
+				
+				String relatedCoach = findCoach(t.getTrainNo(), b.getBookClass());
+				if(!relatedCoach.equals("No Seats Available")) {
+					
+					String bookClass = b.getBookClass();
+					
+					String costPerSeats = checkAvailabeSeats(b, relatedCoach, b.getseats(), t.getDistance());
+					System.out.println(costPerSeats);
+					
+					
+				} else {
+					System.out.println(relatedCoach);
+				}
+				
+				
+			} else {
+				System.out.println("No Train Available");
+			}
 			
-			String bookClass = b.getBookClass();
-			
-			String costPerSeats = checkAvailabeSeats(bookClass, relatedCoach, b.getseats(), t.getDistance());
-			System.out.println(costPerSeats);
 		}
 		
 //		Display();
